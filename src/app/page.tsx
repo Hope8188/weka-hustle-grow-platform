@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, MessageSquare, Smartphone, Users, LineChart, ArrowRight, Star, Menu, X, Play, TrendingUp, Shield, Zap, ChevronDown, User, LogOut, Clock, Sparkles, MapPin, Briefcase } from "lucide-react"
+import { CheckCircle2, MessageSquare, Smartphone, Users, LineChart, ArrowRight, Star, Menu, X, Play, TrendingUp, Shield, Zap, ChevronDown, User, LogOut, Clock, Sparkles, MapPin, Briefcase, Megaphone } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useSession, authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
@@ -130,6 +130,16 @@ export default function Home() {
               <a href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors">Success Stories</a>
               <a href="#pricing" className="text-sm font-medium hover:text-primary transition-colors">Pricing</a>
               
+              {/* Customer Portal Link */}
+              <Button
+                variant="outline"
+                onClick={() => router.push("/post-request")}
+                className="border-secondary text-secondary hover:bg-secondary/10"
+              >
+                <Megaphone className="mr-2 w-4 h-4" />
+                Need a Service?
+              </Button>
+              
               {!isPending && (
                 <>
                   {session?.user ? (
@@ -193,6 +203,16 @@ export default function Home() {
                 <a href="#how-it-works" className="text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
                 <a href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Success Stories</a>
                 <a href="#pricing" className="text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
+                
+                {/* Customer Portal Button */}
+                <Button
+                  variant="outline"
+                  onClick={() => { router.push("/post-request"); setMobileMenuOpen(false); }}
+                  className="w-full border-secondary text-secondary"
+                >
+                  <Megaphone className="mr-2 w-4 h-4" />
+                  Need a Service?
+                </Button>
                 
                 {!isPending && (
                   <>
@@ -360,9 +380,23 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3">
               These Customers Are <span className="gradient-text">Waiting RIGHT NOW</span>
             </h2>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
               Real people, real requests, posted in the last 24 hours. Sign up to contact them instantly.
             </p>
+            
+            {/* Customer CTA */}
+            <div className="bg-secondary/10 border-2 border-secondary/20 rounded-xl p-4 max-w-xl mx-auto mb-8">
+              <p className="text-sm font-medium mb-2">👋 Looking for a service provider?</p>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => router.push("/post-request")}
+                className="border-secondary text-secondary hover:bg-secondary/10"
+              >
+                <Megaphone className="mr-2 w-5 h-5" />
+                Post Your Request (Free)
+              </Button>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -638,17 +672,20 @@ export default function Home() {
 
           {/* Feature Showcase with Screenshots */}
           <div className="space-y-24">
-            {/* M-Pesa Tracking */}
+            {/* M-Pesa Tracking - MARK AS COMING SOON */}
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
-                <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">M-Pesa Integration</Badge>
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge className="bg-accent/10 text-accent border-accent/20">M-Pesa Integration</Badge>
+                  <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20">Coming Q2 2025</Badge>
+                </div>
                 <h3 className="text-3xl font-bold mb-4">Automatic M-Pesa Payment Tracking</h3>
                 <p className="text-lg text-muted-foreground mb-6">
                   Every transaction tracked in real-time. See daily, weekly, monthly income at a glance. Know exactly where every shilling goes—no more guessing.
                 </p>
                 <ul className="space-y-3">
                   {[
-                    "Real-time M-Pesa sync",
+                    "Real-time M-Pesa sync (In Development)",
                     "Automatic receipt generation",
                     "Profit & expense tracking",
                     "Tax-ready reports"
@@ -659,36 +696,50 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
+                <p className="text-sm text-muted-foreground mt-4 bg-muted/30 p-3 rounded-lg">
+                  🚧 Currently building Daraja API integration. Join waitlist to get early access!
+                </p>
               </div>
               <div className="relative">
                 <img 
                   src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/6c4b9b66-a969-46df-a871-9cfcb2bc598c/generated_images/clean%2c-modern-mobile-app-interface-moc-35582124-20251004031318.jpg" 
                   alt="M-Pesa tracking dashboard"
-                  className="rounded-2xl shadow-2xl border-2 border-primary/20"
+                  className="rounded-2xl shadow-2xl border-2 border-primary/20 opacity-75"
                 />
-                <div className="absolute -bottom-4 -right-4 w-64 h-64 bg-accent/20 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl backdrop-blur-sm">
+                  <Badge className="text-lg px-6 py-3 bg-orange-500 text-white">
+                    Coming Q2 2025
+                  </Badge>
+                </div>
               </div>
             </div>
 
-            {/* WhatsApp Automation */}
+            {/* WhatsApp Automation - MARK AS COMING SOON */}
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1 relative">
                 <img 
                   src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/6c4b9b66-a969-46df-a871-9cfcb2bc598c/generated_images/modern-mobile-app-screenshot-showing-wha-b9777561-20251004031326.jpg" 
                   alt="WhatsApp automation interface"
-                  className="rounded-2xl shadow-2xl border-2 border-primary/20"
+                  className="rounded-2xl shadow-2xl border-2 border-primary/20 opacity-75"
                 />
-                <div className="absolute -bottom-4 -left-4 w-64 h-64 bg-primary/20 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl backdrop-blur-sm">
+                  <Badge className="text-lg px-6 py-3 bg-orange-500 text-white">
+                    Coming Q2 2025
+                  </Badge>
+                </div>
               </div>
               <div className="order-1 lg:order-2">
-                <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">Smart Automation</Badge>
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge className="bg-primary/10 text-primary border-primary/20">Smart Automation</Badge>
+                  <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20">Coming Q2 2025</Badge>
+                </div>
                 <h3 className="text-3xl font-bold mb-4">WhatsApp Auto Follow-ups</h3>
                 <p className="text-lg text-muted-foreground mb-6">
                   Never lose a customer again. Automated reminders bring repeat business without lifting a finger. Your customers stay engaged, you stay busy.
                 </p>
                 <ul className="space-y-3">
                   {[
-                    "Scheduled customer reminders",
+                    "Scheduled customer reminders (In Development)",
                     "Personalized messages",
                     "Booking confirmations",
                     "Payment reminders"
@@ -699,10 +750,13 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
+                <p className="text-sm text-muted-foreground mt-4 bg-muted/30 p-3 rounded-lg">
+                  🚧 WhatsApp Business API integration launching Q2 2025. Early bird users get 3 months free!
+                </p>
               </div>
             </div>
 
-            {/* Analytics Dashboard */}
+            {/* Analytics Dashboard - KEEP AS IS (this works) */}
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
                 <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20">Growth Insights</Badge>
