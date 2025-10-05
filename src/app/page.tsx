@@ -3,12 +3,29 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, MessageSquare, Smartphone, Users, LineChart, ArrowRight, Star, Menu, X, Play, TrendingUp, Shield, Zap, ChevronDown } from "lucide-react"
+import { CheckCircle2, MessageSquare, Smartphone, Users, LineChart, ArrowRight, Star, Menu, X, Play, TrendingUp, Shield, Zap, ChevronDown, User, LogOut } from "lucide-react"
 import { useState } from "react"
+import { useSession, authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import Link from "next/link"
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
+  const { data: session, isPending } = useSession()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    const { error } = await authClient.signOut()
+    if (error?.code) {
+      toast.error(error.code)
+    } else {
+      localStorage.removeItem("bearer_token")
+      toast.success("Signed out successfully")
+      router.push("/")
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,9 +43,46 @@ export default function Home() {
               <a href="#how-it-works" className="text-sm font-medium hover:text-primary transition-colors">How It Works</a>
               <a href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors">Success Stories</a>
               <a href="#pricing" className="text-sm font-medium hover:text-primary transition-colors">Pricing</a>
-              <Button className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg">
-                Start Free Now <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
+              
+              {!isPending && (
+                <>
+                  {session?.user ? (
+                    <div className="flex items-center gap-3">
+                      <Button 
+                        variant="outline"
+                        onClick={() => router.push("/dashboard")}
+                        className="border-primary text-primary hover:bg-primary/10"
+                      >
+                        <User className="mr-2 w-4 h-4" />
+                        Dashboard
+                      </Button>
+                      <Button 
+                        variant="ghost"
+                        onClick={handleSignOut}
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <LogOut className="mr-2 w-4 h-4" />
+                        Sign out
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <Button 
+                        variant="ghost"
+                        onClick={() => router.push("/login")}
+                      >
+                        Sign in
+                      </Button>
+                      <Button 
+                        className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg"
+                        onClick={() => router.push("/register")}
+                      >
+                        Start Free Now <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -48,7 +102,47 @@ export default function Home() {
                 <a href="#how-it-works" className="text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
                 <a href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Success Stories</a>
                 <a href="#pricing" className="text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
-                <Button className="bg-gradient-to-r from-primary to-accent hover:opacity-90 w-full">Start Free Now</Button>
+                
+                {!isPending && (
+                  <>
+                    {session?.user ? (
+                      <>
+                        <Button 
+                          variant="outline"
+                          onClick={() => { router.push("/dashboard"); setMobileMenuOpen(false); }}
+                          className="w-full border-primary text-primary"
+                        >
+                          <User className="mr-2 w-4 h-4" />
+                          Dashboard
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}
+                          className="w-full text-destructive border-destructive"
+                        >
+                          <LogOut className="mr-2 w-4 h-4" />
+                          Sign out
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button 
+                          variant="outline"
+                          onClick={() => { router.push("/login"); setMobileMenuOpen(false); }}
+                          className="w-full"
+                        >
+                          Sign in
+                        </Button>
+                        <Button 
+                          className="bg-gradient-to-r from-primary to-accent hover:opacity-90 w-full"
+                          onClick={() => { router.push("/register"); setMobileMenuOpen(false); }}
+                        >
+                          Start Free Now
+                        </Button>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           )}
