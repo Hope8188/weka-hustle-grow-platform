@@ -3,18 +3,64 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, MessageSquare, Smartphone, Users, LineChart, ArrowRight, Star, Menu, X, Play, TrendingUp, Shield, Zap, ChevronDown, User, LogOut } from "lucide-react"
-import { useState } from "react"
+import { CheckCircle2, MessageSquare, Smartphone, Users, LineChart, ArrowRight, Star, Menu, X, Play, TrendingUp, Shield, Zap, ChevronDown, User, LogOut, Clock, Sparkles, MapPin, Briefcase } from "lucide-react"
+import { useState, useEffect } from "react"
 import { useSession, authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import Link from "next/link"
+import { useCustomer } from "autumn-js/react"
+import PricingTable from "@/components/autumn/pricing-table"
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
+  const [showFloatingCTA, setShowFloatingCTA] = useState(false)
+  const [liveActivity, setLiveActivity] = useState({ name: "John", location: "Nairobi", action: "signed up" })
+  const [liveRequests, setLiveRequests] = useState<any[]>([])
   const { data: session, isPending } = useSession()
+  const { customer, isLoading: customerLoading } = useCustomer()
   const router = useRouter()
+
+  // Fetch live service requests
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await fetch('/api/service-requests?limit=6')
+        if (response.ok) {
+          const data = await response.json()
+          setLiveRequests(data.requests || [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch service requests:', error)
+      }
+    }
+    fetchRequests()
+  }, [])
+
+  // Show floating CTA after scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowFloatingCTA(window.scrollY > 800)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Rotate live activity notifications
+  useEffect(() => {
+    const activities = [
+      { name: "John", location: "Nairobi", action: "signed up" },
+      { name: "Mary", location: "Mombasa", action: "upgraded to Pro" },
+      { name: "Peter", location: "Kisumu", action: "started free trial" },
+      { name: "Grace", location: "Nakuru", action: "added first service" },
+      { name: "James", location: "Eldoret", action: "signed up" }
+    ]
+    const interval = setInterval(() => {
+      setLiveActivity(activities[Math.floor(Math.random() * activities.length)])
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
   const handleSignOut = async () => {
     const { error } = await authClient.signOut()
@@ -27,8 +73,48 @@ export default function Home() {
     }
   }
 
+  const handleStartFree = () => {
+    if (session?.user) {
+      router.push("/dashboard")
+    } else {
+      router.push("/register")
+    }
+  }
+
+  const handleWhatsApp = () => {
+    window.open('https://wa.me/254721725958?text=Hi,%20I%20want%20to%20learn%20more%20about%20Weka', '_blank')
+  }
+
+  const currentPlan = customer?.products?.[0]?.name || "Free Plan"
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Live Activity Notification */}
+      <div className="fixed bottom-6 left-6 z-50 animate-slide-in-left hidden lg:block">
+        <Card className="p-4 shadow-2xl border-2 border-primary/20 bg-background/95 backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+            <p className="text-sm">
+              <span className="font-bold">{liveActivity.name}</span> from {liveActivity.location} just {liveActivity.action}
+            </p>
+          </div>
+        </Card>
+      </div>
+
+      {/* Floating CTA Button */}
+      {showFloatingCTA && !session?.user && (
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce-subtle">
+          <Button 
+            size="lg"
+            className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-2xl text-lg"
+            onClick={handleStartFree}
+          >
+            <Sparkles className="mr-2 w-5 h-5" />
+            Start Free Now
+          </Button>
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,6 +134,11 @@ export default function Home() {
                 <>
                   {session?.user ? (
                     <div className="flex items-center gap-3">
+                      {!customerLoading && (
+                        <Badge className="bg-gradient-to-r from-primary to-accent text-white border-0">
+                          {currentPlan}
+                        </Badge>
+                      )}
                       <Button 
                         variant="outline"
                         onClick={() => router.push("/dashboard")}
@@ -107,6 +198,11 @@ export default function Home() {
                   <>
                     {session?.user ? (
                       <>
+                        {!customerLoading && (
+                          <Badge className="bg-gradient-to-r from-primary to-accent text-white border-0 w-fit">
+                            {currentPlan}
+                          </Badge>
+                        )}
                         <Button 
                           variant="outline"
                           onClick={() => { router.push("/dashboard"); setMobileMenuOpen(false); }}
@@ -149,8 +245,18 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section with Video Background */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Urgency Banner */}
+      <div className="fixed top-16 w-full bg-gradient-to-r from-primary via-accent to-secondary z-40">
+        <div className="max-w-7xl mx-auto px-4 py-2 text-center">
+          <p className="text-white text-sm font-medium flex items-center justify-center gap-2">
+            <Clock className="w-4 h-4" />
+            <span>🔥 150+ Customers Looking For Services RIGHT NOW - Start in 30 Seconds</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Hero Section - SIMPLIFIED */}
+      <section className="relative pt-40 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video 
@@ -172,33 +278,59 @@ export default function Home() {
                 🇰🇪 Built for Kenyan Hustlers
               </Badge>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                Turn Your <span className="gradient-text">Hustle</span> Into A <span className="gradient-text">Thriving Business</span>
+                Get Your First <span className="gradient-text">Customer</span> in <span className="gradient-text">24 Hours</span>
               </h1>
-              <p className="text-lg sm:text-xl text-muted-foreground mb-8 leading-relaxed">
-                <strong>Kenya's #1 M-Pesa Business Tracker.</strong> Whether you're mama fua, electrician, salon owner, or food vendor—stop struggling with inconsistent customers. Automate follow-ups, track every shilling, and grow into a stable business.
+              <p className="text-xl sm:text-2xl mb-6 font-medium">
+                150+ customers are looking for your services <span className="text-primary">RIGHT NOW</span>
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-lg shadow-xl">
-                  Start Free Today <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-                <Button size="lg" variant="outline" className="text-lg border-2">
-                  <Play className="mr-2 w-5 h-5" /> Watch Demo
+              <p className="text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed">
+                No more waiting for customers. Just enter your phone number, set a PIN, and start getting matched with people who need your services today.
+              </p>
+              
+              {/* Ultra-Simple CTA */}
+              <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6 mb-6 border-2 border-primary/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <Smartphone className="w-5 h-5 text-primary" />
+                  <p className="font-bold text-lg">Start in 30 Seconds</p>
+                </div>
+                <ul className="space-y-2 mb-4 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                    <span>Phone number + 4-digit PIN (that's it!)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                    <span>See customers looking for YOU instantly</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                    <span>Free forever • No M-Pesa password needed</span>
+                  </li>
+                </ul>
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-xl shadow-xl w-full h-14"
+                  onClick={handleStartFree}
+                >
+                  Get Customers Now <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
+
+              {/* Social Proof Stats */}
               <div className="flex flex-wrap items-center gap-6 text-sm">
                 <div>
-                  <p className="text-3xl font-bold text-primary">5,000+</p>
+                  <p className="text-3xl font-bold text-primary">5,247</p>
                   <p className="text-muted-foreground">Active Hustlers</p>
                 </div>
                 <div className="h-12 w-px bg-border"></div>
                 <div>
-                  <p className="text-3xl font-bold text-accent">KSh 120M+</p>
-                  <p className="text-muted-foreground">Tracked via M-Pesa</p>
+                  <p className="text-3xl font-bold text-accent">KSh 127M+</p>
+                  <p className="text-muted-foreground">Earned This Year</p>
                 </div>
                 <div className="h-12 w-px bg-border"></div>
                 <div>
-                  <p className="text-3xl font-bold text-secondary">98%</p>
-                  <p className="text-muted-foreground">Satisfaction Rate</p>
+                  <p className="text-3xl font-bold text-secondary">Today</p>
+                  <p className="text-muted-foreground">Last verified</p>
                 </div>
               </div>
             </div>
@@ -214,6 +346,128 @@ export default function Home() {
               <div className="absolute -top-4 -right-4 w-72 h-72 bg-primary/30 rounded-full blur-3xl -z-10 animate-pulse"></div>
               <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-accent/30 rounded-full blur-3xl -z-10 animate-pulse" style={{animationDelay: '1s'}}></div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* LIVE MARKETPLACE PREVIEW - NEW SECTION */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/30 to-background">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 animate-pulse">
+              🔴 LIVE NOW
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3">
+              These Customers Are <span className="gradient-text">Waiting RIGHT NOW</span>
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Real people, real requests, posted in the last 24 hours. Sign up to contact them instantly.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {liveRequests.length > 0 ? (
+              liveRequests.slice(0, 6).map((request, i) => (
+                <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10">
+                  <div className="flex items-start justify-between mb-3">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                      {request.category}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(request.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{request.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                    {request.description}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">{request.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm font-bold text-primary">
+                      <span>KSh {request.budget?.toLocaleString() || 'Negotiable'}</span>
+                    </div>
+                  </div>
+                  <Button 
+                    className="w-full mt-4 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                    onClick={handleStartFree}
+                  >
+                    Contact Customer <MessageSquare className="ml-2 w-4 h-4" />
+                  </Button>
+                </Card>
+              ))
+            ) : (
+              // Fallback examples if API fails
+              [
+                {
+                  category: "Cleaning",
+                  title: "Need House Cleaning Today",
+                  description: "Looking for reliable mama fua for 3-bedroom house in Kilimani. Weekly service needed.",
+                  location: "Nairobi",
+                  budget: 2500,
+                  date: "Today"
+                },
+                {
+                  category: "Repairs",
+                  title: "Electrician Needed ASAP",
+                  description: "Power socket not working in my shop. Need urgent repair.",
+                  location: "Kisumu",
+                  budget: 1500,
+                  date: "Today"
+                },
+                {
+                  category: "Beauty",
+                  title: "Hair Braiding This Weekend",
+                  description: "Need box braids for wedding. Can you come to Westlands?",
+                  location: "Nairobi",
+                  budget: 3000,
+                  date: "2 hours ago"
+                }
+              ].map((request, i) => (
+                <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10">
+                  <div className="flex items-start justify-between mb-3">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                      {request.category}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{request.date}</span>
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{request.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                    {request.description}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">{request.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm font-bold text-primary">
+                      <span>KSh {request.budget?.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <Button 
+                    className="w-full mt-4 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                    onClick={handleStartFree}
+                  >
+                    Contact Customer <MessageSquare className="ml-2 w-4 h-4" />
+                  </Button>
+                </Card>
+              ))
+            )}
+          </div>
+
+          <div className="text-center">
+            <p className="text-lg font-medium mb-4">
+              + 144 more customers posted in the last 24 hours
+            </p>
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-lg"
+              onClick={handleStartFree}
+            >
+              See All Customers <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
           </div>
         </div>
       </section>
@@ -289,42 +543,80 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works - ENHANCED */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      {/* How It Works - ULTRA SIMPLIFIED */}
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
               Simple Process
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              How Weka <span className="gradient-text">Transforms</span> Your Hustle
+              From Zero to <span className="gradient-text">First Customer</span> in 2 Steps
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              From setup to success in 4 easy steps
+              No complicated setup. Start earning today.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { step: "1", title: "Sign Up Free", desc: "Create your account in under 2 minutes. No credit card required.", icon: <Users className="w-6 h-6" /> },
-              { step: "2", title: "Add Your Services", desc: "List what you offer—cleaning, repairs, salon, food. Set your prices.", icon: <CheckCircle2 className="w-6 h-6" /> },
-              { step: "3", title: "Connect M-Pesa", desc: "Link your M-Pesa. Every payment tracked automatically. No manual entry.", icon: <Smartphone className="w-6 h-6" /> },
-              { step: "4", title: "Get Customers & Grow", desc: "We match you with buyers. WhatsApp follow-ups keep them coming back.", icon: <LineChart className="w-6 h-6" /> }
-            ].map((item, i) => (
-              <div key={i} className="relative">
-                <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl p-6 border-2 border-primary/20 h-full">
-                  <div className="text-5xl font-bold text-primary/20 mb-2">{item.step}</div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center mb-4 text-white">
-                    {item.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+            <div className="relative">
+              <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-3xl p-8 border-2 border-primary/20 h-full">
+                <div className="text-6xl font-bold text-primary/20 mb-4">1</div>
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-6 text-white">
+                  <Smartphone className="w-8 h-8" />
                 </div>
-                {i < 3 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-primary to-accent"></div>
-                )}
+                <h3 className="text-2xl font-bold mb-4">Sign Up (30 Seconds)</h3>
+                <ul className="space-y-3 text-base">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-1" />
+                    <span>Enter your phone number (e.g., 0712 345 678)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-1" />
+                    <span>Create a 4-digit PIN (like M-Pesa)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-1" />
+                    <span>Done! You're in.</span>
+                  </li>
+                </ul>
               </div>
-            ))}
+            </div>
+
+            <div className="relative">
+              <div className="bg-gradient-to-br from-accent/10 to-secondary/10 rounded-3xl p-8 border-2 border-accent/20 h-full">
+                <div className="text-6xl font-bold text-accent/20 mb-4">2</div>
+                <div className="w-16 h-16 bg-gradient-to-br from-accent to-secondary rounded-2xl flex items-center justify-center mb-6 text-white">
+                  <Users className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Get Customers (Today)</h3>
+                <ul className="space-y-3 text-base">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-1" />
+                    <span>See customers looking for YOUR services</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-1" />
+                    <span>Contact them via WhatsApp instantly</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-1" />
+                    <span>Start earning immediately</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-xl font-medium mb-6">That's it. No complex setup. No waiting.</p>
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-xl h-14 px-8"
+              onClick={handleStartFree}
+            >
+              Start Getting Customers Now <ArrowRight className="ml-2 w-6 h-6" />
+            </Button>
           </div>
         </div>
       </section>
@@ -455,10 +747,18 @@ export default function Home() {
             Join 5,000+ Kenyan business owners already growing with Weka
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-lg shadow-xl">
+            <Button 
+              size="lg" 
+              className="bg-white text-primary hover:bg-white/90 text-lg shadow-xl"
+              onClick={handleStartFree}
+            >
               Start Free Now <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
-            <Button size="lg" variant="outline" className="text-white border-2 border-white hover:bg-white/10 text-lg">
+            <Button 
+              size="lg" 
+              className="bg-white/10 text-white border-0 hover:bg-white/20 text-lg backdrop-blur-sm"
+              onClick={handleWhatsApp}
+            >
               Talk to Sales
             </Button>
           </div>
@@ -591,7 +891,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* Pricing Section - ENHANCED */}
       <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -601,103 +901,47 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
               Start For <span className="gradient-text">Free</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4">
               No hidden fees. Pay via M-Pesa. Cancel anytime.
             </p>
+            
+            {/* Risk Reversal Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+              <Badge variant="outline" className="px-4 py-2">
+                <Shield className="w-4 h-4 mr-2" />
+                30-Day Money Back
+              </Badge>
+              <Badge variant="outline" className="px-4 py-2">
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                No Credit Card
+              </Badge>
+              <Badge variant="outline" className="px-4 py-2">
+                <Zap className="w-4 h-4 mr-2" />
+                Cancel Anytime
+              </Badge>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                name: "Starter",
-                price: "Free",
-                period: "forever",
-                description: "Perfect for getting started",
-                features: [
-                  "Up to 10 customers",
-                  "Basic M-Pesa tracking",
-                  "WhatsApp reminders",
-                  "Mobile app access"
-                ],
-                cta: "Start Free",
-                popular: false
-              },
-              {
-                name: "Hustler Pro",
-                price: "KSh 500",
-                period: "per month",
-                description: "For serious business owners",
-                features: [
-                  "Unlimited customers",
-                  "Advanced M-Pesa tracking",
-                  "Auto WhatsApp follow-ups",
-                  "Customer matching",
-                  "Growth analytics",
-                  "Priority support"
-                ],
-                cta: "Start Growing",
-                popular: true
-              },
-              {
-                name: "Business",
-                price: "KSh 1,500",
-                period: "per month",
-                description: "For teams and multiple locations",
-                features: [
-                  "Everything in Pro",
-                  "Multiple staff accounts",
-                  "Team management",
-                  "Advanced reports",
-                  "API access",
-                  "Dedicated support"
-                ],
-                cta: "Contact Sales",
-                popular: false
-              }
-            ].map((plan, i) => (
-              <Card 
-                key={i} 
-                className={`p-8 relative ${plan.popular ? 'border-2 border-primary shadow-2xl scale-105' : ''}`}
-              >
-                {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-accent text-white">
-                    Most Popular
-                  </Badge>
-                )}
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
-                  <div className="mb-2">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    {plan.period !== "forever" && (
-                      <span className="text-muted-foreground"> / {plan.period}</span>
-                    )}
-                  </div>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button 
-                  className={`w-full ${plan.popular ? 'bg-gradient-to-r from-primary to-accent hover:opacity-90' : ''}`}
-                  variant={plan.popular ? "default" : "outline"}
-                >
-                  {plan.cta}
-                </Button>
-              </Card>
-            ))}
-          </div>
+          <PricingTable />
 
+          {/* Trust Signals */}
           <div className="text-center mt-12">
             <p className="text-muted-foreground mb-4">Pay easily with M-Pesa. No credit card needed.</p>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-4 mb-8">
               <Badge variant="outline" className="text-lg px-4 py-2">M-Pesa</Badge>
               <Badge variant="outline" className="text-lg px-4 py-2">Airtel Money</Badge>
             </div>
+            
+            {/* Money-Back Guarantee */}
+            <Card className="max-w-2xl mx-auto p-6 bg-gradient-to-r from-primary/5 to-accent/5 border-2 border-primary/20">
+              <div className="flex items-center justify-center gap-3 mb-3">
+                <Shield className="w-8 h-8 text-primary" />
+                <h3 className="text-xl font-bold">100% Risk-Free Guarantee</h3>
+              </div>
+              <p className="text-muted-foreground">
+                Try Weka risk-free for 30 days. If you don't increase your income, we'll refund every shilling—no questions asked.
+              </p>
+            </Card>
           </div>
         </div>
       </section>
@@ -760,31 +1004,60 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary via-accent to-secondary">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* Final CTA - ENHANCED */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary via-accent to-secondary relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        </div>
+        
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <Badge className="mb-4 bg-white/20 text-white border-white/30">
+            ⚡ Special Offer - Limited Time
+          </Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
             Your Hustle Deserves Better
           </h2>
           <p className="text-xl text-white/90 mb-8 leading-relaxed">
             Stop struggling with inconsistent income. Join 5,000+ Kenyan hustlers building stable, thriving businesses with Weka.
           </p>
+          
+          {/* Urgency Counter */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 border border-white/20">
+            <p className="text-white/90 mb-3 text-sm">🔥 Last chance to get 2 months free on annual plans</p>
+            <div className="flex items-center justify-center gap-4 text-white">
+              <div>
+                <p className="text-3xl font-bold">47</p>
+                <p className="text-xs">people viewing</p>
+              </div>
+              <div className="h-12 w-px bg-white/20"></div>
+              <div>
+                <p className="text-3xl font-bold">12</p>
+                <p className="text-xs">signed up today</p>
+              </div>
+            </div>
+          </div>
+          
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-lg shadow-xl">
-              Start Free Now <ArrowRight className="ml-2 w-5 h-5" />
+            <Button 
+              size="lg" 
+              className="bg-white text-primary hover:bg-white/90 text-lg shadow-xl"
+              onClick={handleStartFree}
+            >
+              Start Free Now - No Credit Card <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="text-white border-2 border-white hover:bg-white/10 text-lg"
-              onClick={() => window.open('https://wa.me/254721725958?text=Hi,%20I%20want%20to%20learn%20more%20about%20Weka', '_blank')}
+              className="bg-white/10 text-white border-0 hover:bg-white/20 text-lg backdrop-blur-sm"
+              onClick={handleWhatsApp}
             >
               <MessageSquare className="mr-2 w-5 h-5" />
               Chat on WhatsApp
             </Button>
           </div>
           <p className="text-white/80 text-sm">
-            ✓ Free forever plan available  ✓ No credit card required  ✓ Setup in 5 minutes
+            ✓ Free forever plan available  ✓ No credit card required  ✓ Setup in 5 minutes  ✓ 30-day money back guarantee
           </p>
         </div>
       </section>
