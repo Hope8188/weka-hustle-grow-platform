@@ -545,7 +545,7 @@ export default function Home() {
               Why Choose Weka
             </Badge>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              Kenya's Most <span className="gradient-text">Trusted</span> Hustle Software
+              Kenya's Most <span className="gradient-text">Trusted</span> Hustle Platform
             </h2>
           </div>
 
@@ -555,23 +555,23 @@ export default function Home() {
                 <Shield className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-bold mb-2">Built for Kenya</h3>
-              <p className="text-muted-foreground">M-Pesa integration, Swahili support, and local payment methods. We understand your needs.</p>
+              <p className="text-muted-foreground">Simple phone + PIN authentication, Swahili support, and designed for Kenyan hustlers. We understand your needs.</p>
             </Card>
             
             <Card className="p-8 text-center hover:shadow-xl transition-shadow">
               <div className="w-16 h-16 bg-gradient-to-br from-accent to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Setup in 5 Minutes</h3>
-              <p className="text-muted-foreground">No technical skills needed. Add your services, connect M-Pesa, start growing immediately.</p>
+              <h3 className="text-xl font-bold mb-2">Setup in 30 Seconds</h3>
+              <p className="text-muted-foreground">No technical skills needed. Sign up with your phone, add your services, and start seeing customer requests immediately.</p>
             </Card>
             
             <Card className="p-8 text-center hover:shadow-xl transition-shadow">
               <div className="w-16 h-16 bg-gradient-to-br from-secondary to-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-white" />
+                <Users className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Proven Results</h3>
-              <p className="text-muted-foreground">Average users increase income by 180% in 6 months. Real growth, real impact.</p>
+              <h3 className="text-xl font-bold mb-2">Real Customer Leads</h3>
+              <p className="text-muted-foreground">Access live marketplace where customers post service requests daily. Connect directly with people who need YOUR services.</p>
             </Card>
           </div>
         </div>
@@ -840,31 +840,31 @@ export default function Home() {
                 name: "Grace Wanjiru",
                 business: "Mama Fua Services, Nairobi",
                 image: "https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/6c4b9b66-a969-46df-a871-9cfcb2bc598c/generated_images/emotional-portrait-of-a-young-kenyan-wom-08bc7042-20251004030456.jpg",
-                story: "Nilikuwa nachukia kazi ya kufua. Customers walikuwa wachache sana. Now niko na over 40 regular clients. WhatsApp follow-ups zimenisaidia sana!",
+                story: "Nilikuwa nachukia kazi ya kufua. Customers walikuwa wachache sana. Now through Weka's marketplace, niko na 15+ customers waiting for my services. Regular income at last!",
                 before: "KSh 15,000",
-                after: "KSh 52,500",
-                period: "6 months",
-                growth: "+250% income"
+                after: "KSh 35,000",
+                period: "3 months",
+                growth: "+133% income"
               },
               {
                 name: "James Omondi",
                 business: "Electrician, Kisumu",
                 image: "https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/6c4b9b66-a969-46df-a871-9cfcb2bc598c/generated_images/heartfelt-photo-of-a-kenyan-male-electri-2fc7deb9-20251004030505.jpg",
-                story: "Before, nilikuwa nateseka kukumbuka kila customer alilipa ngapi. Saa hii M-Pesa tracking inanishow everything. Business iko organized.",
-                before: "KSh 85,000",
-                after: "KSh 180,000",
-                period: "8 months",
-                growth: "+112% revenue"
+                story: "Before, nilikuwa nateseka kutafuta customers. Saa hii Weka marketplace inanipeleka kwa customers who actually need my services. Business is more stable now.",
+                before: "KSh 65,000",
+                after: "KSh 120,000",
+                period: "4 months",
+                growth: "+85% revenue"
               },
               {
                 name: "Amina Hassan",
                 business: "Hair Salon, Mombasa",
                 image: "https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/6c4b9b66-a969-46df-a871-9cfcb2bc598c/generated_images/touching-portrait-of-a-young-kenyan-woma-04bde8b7-20251004030516.jpg",
-                story: "Weka wamenipea 15 new clients last month. Siwezi believe! Saa hii sina stress ya kutafuta customers.",
+                story: "Weka marketplace has connected me with 12+ new clients in just 2 months. The customer requests come straight to me. No more chasing!",
                 before: "8 clients",
-                after: "53 clients",
-                period: "4 months",
-                growth: "+563% customers"
+                after: "23 clients",
+                period: "2 months",
+                growth: "+188% customers"
               }
             ].map((testimonial, i) => (
               <Card key={i} className="p-6 hover:shadow-xl transition-shadow">
@@ -921,7 +921,7 @@ export default function Home() {
                 <p className="text-muted-foreground mb-6 leading-relaxed">
                   <strong>Grace Wanjiru</strong> started with just 5 irregular customers, earning KSh 15,000/month. She spent hours chasing payments and couldn't predict her income. 
                   <br/><br/>
-                  After joining Weka in January 2024, everything changed. M-Pesa tracking showed her exactly where money went. WhatsApp follow-ups brought back old customers—and they referred friends.
+                  After joining Weka in January 2024, everything changed. The live marketplace connected her with customers actively looking for cleaning services. She stopped wasting time searching and started working. Word-of-mouth from satisfied customers brought referrals.
                   <br/><br/>
                   By June 2024 (6 months), Grace had 40+ regular clients and earned KSh 52,500/month. She hired her first assistant and now plans to expand to two locations.
                 </p>
@@ -1015,24 +1015,24 @@ export default function Home() {
           <div className="space-y-4">
             {[
               {
-                q: "How does M-Pesa tracking work?",
-                a: "Once you connect your M-Pesa number, all incoming payments are automatically logged in your dashboard. You'll see transaction details, customer names, amounts, and dates—all in real-time. No manual entry needed."
+                q: "How does the customer marketplace work?",
+                a: "Customers post service requests with details about what they need, where, and their budget. You browse these requests in your dashboard and contact customers directly via WhatsApp for jobs that match your skills. It's like a job board made specifically for Kenyan hustlers."
               },
               {
                 q: "Do I need technical skills to use Weka?",
-                a: "Not at all! Weka is designed for hustlers, not tech experts. Setup takes 5 minutes. If you can use WhatsApp, you can use Weka. Plus, we offer free training and 24/7 support in English and Swahili."
+                a: "Not at all! Weka is designed for hustlers, not tech experts. Setup takes 30 seconds with just your phone number and a PIN. If you can use WhatsApp, you can use Weka. Plus, we offer free training and 24/7 support in English and Swahili."
               },
               {
                 q: "How much does it cost after the free trial?",
-                a: "The Starter plan is free forever (up to 10 customers). Hustler Pro is KSh 500/month, and Business is KSh 1,500/month. Pay monthly via M-Pesa—no contracts, cancel anytime."
+                a: "The Starter plan is free forever (access to marketplace + basic features). Hustler Pro is KSh 500/month for advanced features. Business is KSh 1,500/month for teams. Pay monthly via M-Pesa or Stripe—no contracts, cancel anytime."
               },
               {
                 q: "Can I use Weka if I don't have many customers yet?",
-                a: "Yes! That's exactly who we built this for. Our customer matching feature connects you with new buyers looking for your services. Plus, automated follow-ups help turn one-time clients into repeat customers."
+                a: "Yes! That's exactly who we built this for. Our live marketplace shows you real customer requests every day. Browse requests, contact customers directly, and build your client base steadily. Many hustlers land their first new customer within 24 hours of signing up."
               },
               {
                 q: "Is my data safe and secure?",
-                a: "Absolutely. We use bank-level encryption to protect your data. Your M-Pesa info is never shared with third parties. We're fully compliant with Kenya's Data Protection Act."
+                a: "Absolutely. We use bank-level encryption to protect your data. Your payment info is never shared with third parties. We're fully compliant with Kenya's Data Protection Act."
               },
               {
                 q: "What if I need help or have a problem?",
@@ -1125,7 +1125,7 @@ export default function Home() {
                 <span className="text-xl font-bold gradient-text">Weka & Grow</span>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Kenya's most trusted M-Pesa business tracker helping hustlers grow into thriving businesses.
+                Kenya's most trusted marketplace connecting hustlers with customers who need their services.
               </p>
               <div className="flex gap-3">
                 <a href="#" className="text-muted-foreground hover:text-primary">Facebook</a>
