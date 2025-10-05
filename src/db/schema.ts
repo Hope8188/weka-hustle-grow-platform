@@ -1,4 +1,4 @@
-import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, integer, text, real } from 'drizzle-orm/sqlite-core';
 
 
 
@@ -65,4 +65,38 @@ export const verification = sqliteTable("verification", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
     () => new Date(),
   ),
+});
+
+// Business tables for Weka business management
+export const customers = sqliteTable('customers', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  email: text('email'),
+  phone: text('phone'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+export const services = sqliteTable('services', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  serviceName: text('service_name').notNull(),
+  description: text('description'),
+  price: real('price').notNull(),
+  status: text('status').notNull().default('active'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+export const transactions = sqliteTable('transactions', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  customerId: integer('customer_id').references(() => customers.id, { onDelete: 'set null' }),
+  mpesaCode: text('mpesa_code'),
+  amount: real('amount').notNull(),
+  transactionType: text('transaction_type').notNull(),
+  description: text('description'),
+  transactionDate: text('transaction_date').notNull(),
+  createdAt: text('created_at').notNull(),
 });
