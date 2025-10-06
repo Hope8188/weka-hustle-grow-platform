@@ -47,19 +47,31 @@ export const notificationService = {
     return verifyOTP(phoneNumber, otp)
   },
   
-  // Service match notifications
-  notifyMatch: async (phoneNumber: string, customerName: string, serviceCategory: string, description?: string) => {
+  // Service match notifications (for providers)
+  notifyServiceMatch: async (phoneNumber: string, customerName: string, serviceCategory: string, location: string) => {
     const { notifyServiceMatch } = await import('./whatsapp')
     const { notifyServiceMatchSMS } = await import('./sms')
     
     // Try WhatsApp first, fallback to SMS
     if (process.env.WHATSAPP_API_KEY) {
-      const result = await notifyServiceMatch(phoneNumber, customerName, serviceCategory, description || '')
+      const result = await notifyServiceMatch(phoneNumber, customerName, serviceCategory, location)
       if (result.success) return result
     }
     
     // Fallback to SMS
     return await notifyServiceMatchSMS(phoneNumber, customerName, serviceCategory)
+  },
+
+  // Customer confirmation (for customers who post requests)
+  notifyCustomerRequestReceived: async (phoneNumber: string, serviceCategory: string) => {
+    const { sendSMS } = await import('./sms')
+    
+    const message = `Your service request for ${serviceCategory} has been received! Service providers in your area will contact you soon. Thank you for using Weka!`
+    
+    return sendSMS({
+      to: phoneNumber,
+      message
+    })
   },
   
   // Payment notifications
