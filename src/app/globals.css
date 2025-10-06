@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+/* Updated: 2025-10-06T03:16:01.030Z */
+/* Updated: 2025-10-05T18:23:25.213Z */
+/* Updated: 2025-10-05T17:04:42.287Z */
+/* Updated: 2025-10-05T16:53:39.502Z */
+/* Updated: 2025-10-05T15:53:37.238Z */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Righteous&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -9,6 +14,7 @@
   --color-foreground: var(--foreground);
   --font-sans: 'Inter', var(--font-geist-sans);
   --font-display: 'Space Grotesk', var(--font-geist-sans);
+  --font-brand: 'Righteous', 'Space Grotesk', cursive;
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -130,6 +136,14 @@
     animation: fade-in-up 0.6s ease-out forwards;
   }
   
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
+  }
+  
+  .animate-slide-in-left {
+    animation: slide-in-left 0.5s ease-out forwards;
+  }
+  
   @keyframes fade-in-up {
     from {
       opacity: 0;
@@ -138,6 +152,26 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+  
+  @keyframes bounce-subtle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
   
