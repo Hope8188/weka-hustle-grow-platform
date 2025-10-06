@@ -122,7 +122,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold gradient-text" style={{ fontFamily: 'var(--font-brand)' }}>Weka</span>
+              <span className="text-2xl font-bold gradient-text">Weka</span>
             </div>
             
             {/* Desktop Navigation */}
@@ -836,7 +836,7 @@ export default function Home() {
             Ready to Transform Your Hustle?
           </h2>
           <p className="text-lg text-white/90 mb-8">
-            Join 5,000+ Kenyan business owners already growing with Weka
+            Join 5,000+ Kenyan hustlers already growing with Weka
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
@@ -851,7 +851,8 @@ export default function Home() {
               className="bg-white/10 text-white border-0 hover:bg-white/20 text-lg backdrop-blur-sm"
               onClick={handleWhatsApp}
             >
-              Talk to Sales
+              <MessageSquare className="mr-2 w-5 h-5" />
+              Get Help on WhatsApp
             </Button>
           </div>
         </div>
@@ -1106,7 +1107,7 @@ export default function Home() {
         
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <Badge className="mb-4 bg-white/20 text-white border-white/30">
-            ⚡ Special Offer - Limited Time
+            ⚡ Limited Time Offer
           </Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
             Your Hustle Deserves Better
@@ -1117,7 +1118,7 @@ export default function Home() {
           
           {/* Urgency Counter */}
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 border border-white/20">
-            <p className="text-white/90 mb-3 text-sm">🔥 Last chance to get 2 months free on annual plans</p>
+            <p className="text-white/90 mb-3 text-sm">🔥 Start your free account today</p>
             <div className="flex items-center justify-center gap-4 text-white">
               <div>
                 <p className="text-3xl font-bold">47</p>
@@ -1160,15 +1161,15 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-xl font-bold gradient-text" style={{ fontFamily: 'var(--font-brand)' }}>Weka & Grow</span>
+                <span className="text-xl font-bold gradient-text">Weka</span>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
                 Kenya's most trusted marketplace connecting hustlers with customers who need their services.
               </p>
               <div className="flex gap-3">
-                <a href="#" className="text-muted-foreground hover:text-primary">Facebook</a>
-                <a href="#" className="text-muted-foreground hover:text-primary">Twitter</a>
-                <a href="#" className="text-muted-foreground hover:text-primary">Instagram</a>
+                <a href="https://facebook.com/weka" target="_blank" rel="noopener" className="text-muted-foreground hover:text-primary">Facebook</a>
+                <a href="https://twitter.com/weka" target="_blank" rel="noopener" className="text-muted-foreground hover:text-primary">Twitter</a>
+                <a href="https://instagram.com/weka" target="_blank" rel="noopener" className="text-muted-foreground hover:text-primary">Instagram</a>
               </div>
             </div>
             
@@ -1178,17 +1179,17 @@ export default function Home() {
                 <li><a href="#features" className="hover:text-primary">Features</a></li>
                 <li><a href="#pricing" className="hover:text-primary">Pricing</a></li>
                 <li><a href="#how-it-works" className="hover:text-primary">How It Works</a></li>
-                <li><a href="#" className="hover:text-primary">Mobile App</a></li>
+                <li><a href="/marketplace" className="hover:text-primary">Marketplace</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-bold mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">About Us</a></li>
+                <li><a href="/about" className="hover:text-primary">About Us</a></li>
                 <li><a href="#testimonials" className="hover:text-primary">Success Stories</a></li>
-                <li><a href="#" className="hover:text-primary">Blog</a></li>
-                <li><a href="#" className="hover:text-primary">Contact</a></li>
+                <li><a href="/blog" className="hover:text-primary">Blog</a></li>
+                <li><a href="/contact" className="hover:text-primary">Contact</a></li>
               </ul>
             </div>
             
@@ -1204,10 +1205,10 @@ export default function Home() {
           </div>
           
           <div className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>&copy; 2025 Weka & Grow. Made with ❤️ in Kenya 🇰🇪</p>
+            <p>&copy; 2025 Weka. Made with ❤️ in Kenya 🇰🇪</p>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-primary">Privacy Policy</a>
-              <a href="#" className="hover:text-primary">Terms of Service</a>
+              <a href="/privacy" className="hover:text-primary">Privacy Policy</a>
+              <a href="/terms" className="hover:text-primary">Terms of Service</a>
             </div>
           </div>
         </div>
