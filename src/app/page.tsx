@@ -65,14 +65,13 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
-  // Fetch live service requests - FIX API RESPONSE HANDLING
+  // Fetch live service requests
   useEffect(() => {
     const fetchRequests = async () => {
       try {
         const response = await fetch('/api/service-requests?limit=6')
         if (response.ok) {
           const data = await response.json()
-          // API returns array directly, not wrapped in {requests: [...]}
           setLiveRequests(Array.isArray(data) ? data : [])
         }
       } catch (error) {
@@ -112,7 +111,7 @@ export default function Home() {
       toast.error(error.code)
     } else {
       localStorage.removeItem("bearer_token")
-      refetch() // Update session state
+      refetch()
       toast.success("Signed out successfully")
       router.push("/")
     }
@@ -134,11 +133,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Live Activity Notification */}
-      <div className="fixed bottom-6 left-6 z-50 animate-slide-in-left hidden lg:block">
-        <Card className="p-4 shadow-2xl border-2 border-primary/20 bg-background/95 backdrop-blur-sm">
+      {/* Live Activity Notification - Simplified */}
+      <div className="fixed bottom-6 left-6 z-50 hidden lg:block">
+        <Card className="p-4 shadow-lg border bg-card">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-primary rounded-full"></div>
             <p className="text-sm">
               <span className="font-bold">{liveActivity.name}</span> from {liveActivity.location} just {liveActivity.action}
             </p>
@@ -146,12 +145,12 @@ export default function Home() {
         </Card>
       </div>
 
-      {/* Floating CTA Button */}
+      {/* Floating CTA Button - Solid Color */}
       {showFloatingCTA && !session?.user && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce-subtle">
+        <div className="fixed bottom-6 right-6 z-50">
           <Button 
             size="lg"
-            className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-2xl text-lg"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl text-lg"
             onClick={handleStartFree}
           >
             <Sparkles className="mr-2 w-5 h-5" />
@@ -190,7 +189,7 @@ export default function Home() {
                   {session?.user ? (
                     <div className="flex items-center gap-3">
                       {!customerLoading && (
-                        <Badge className="bg-gradient-to-r from-primary to-accent text-white border-0">
+                        <Badge className="bg-primary/10 text-primary border-primary/30">
                           {currentPlan}
                         </Badge>
                       )}
@@ -220,7 +219,7 @@ export default function Home() {
                         Sign in
                       </Button>
                       <Button 
-                        className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md"
                         onClick={() => router.push("/register")}
                       >
                         Start Free Now <ArrowRight className="ml-2 w-4 h-4" />
@@ -264,7 +263,7 @@ export default function Home() {
                     {session?.user ? (
                       <>
                         {!customerLoading && (
-                          <Badge className="bg-gradient-to-r from-primary to-accent text-white border-0 w-fit">
+                          <Badge className="bg-primary/10 text-primary border-primary/30 w-fit">
                             {currentPlan}
                           </Badge>
                         )}
@@ -295,7 +294,7 @@ export default function Home() {
                           Sign in
                         </Button>
                         <Button 
-                          className="bg-gradient-to-r from-primary to-accent hover:opacity-90 w-full"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground w-full"
                           onClick={() => { router.push("/register"); setMobileMenuOpen(false); }}
                         >
                           Start Free Now
@@ -310,18 +309,18 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Urgency Banner with live data */}
-      <div className="fixed top-16 w-full bg-gradient-to-r from-primary via-accent to-secondary z-40">
+      {/* Urgency Banner - Solid Color */}
+      <div className="fixed top-16 w-full bg-primary z-40">
         <div className="max-w-7xl mx-auto px-4 py-2 text-center">
-          <p className="text-white text-sm font-medium flex items-center justify-center gap-2">
+          <p className="text-primary-foreground text-sm font-medium flex items-center justify-center gap-2">
             <Clock className="w-4 h-4" />
             <span>🔥 {liveStats.requestsLast24h}+ Customers Looking For Services RIGHT NOW - Start in 30 Seconds</span>
           </p>
         </div>
       </div>
 
-      {/* Hero Section - Use live stats */}
-      <section className="relative pt-40 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Hero Section - Keep gradient only in title */}
+      <section className="relative pt-40 pb-20 px-4 sm:px-6 lg:px-8">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video 
@@ -339,7 +338,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in-up">
-              <Badge className="mb-4 bg-gradient-to-r from-primary/20 to-accent/20 text-primary border-primary/30 text-sm px-4 py-1">
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/30 text-sm px-4 py-1">
                 🇰🇪 Built for Kenyan Hustlers
               </Badge>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
@@ -352,8 +351,8 @@ export default function Home() {
                 No more waiting for customers. Just enter your phone number, set a PIN, and start getting matched with people who need your services today.
               </p>
               
-              {/* Ultra-Simple CTA */}
-              <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6 mb-6 border-2 border-primary/20">
+              {/* Ultra-Simple CTA - Simplified Background */}
+              <div className="bg-primary/5 rounded-2xl p-6 mb-6 border border-primary/20">
                 <div className="flex items-center gap-2 mb-3">
                   <Smartphone className="w-5 h-5 text-primary" />
                   <p className="font-bold text-lg">Start in 30 Seconds</p>
@@ -374,7 +373,7 @@ export default function Home() {
                 </ul>
                 <Button 
                   size="lg" 
-                  className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-xl shadow-xl w-full h-14"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-xl shadow-lg w-full h-14"
                   onClick={handleStartFree}
                 >
                   Get Customers Now <ArrowRight className="ml-2 w-5 h-5" />
@@ -407,15 +406,13 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-4 border-primary/20">
+              <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-2 border-primary/20">
                 <img 
                   src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/6c4b9b66-a969-46df-a871-9cfcb2bc598c/generated_images/heartwarming-photo-of-a-smiling-middle-a-a63ca0b2-20251004030447.jpg" 
                   alt="Successful Kenyan entrepreneur" 
                   className="w-full h-auto"
                 />
               </div>
-              <div className="absolute -top-4 -right-4 w-72 h-72 bg-primary/30 rounded-full blur-3xl -z-10 animate-pulse"></div>
-              <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-accent/30 rounded-full blur-3xl -z-10 animate-pulse" style={{animationDelay: '1s'}}></div>
             </div>
           </div>
         </div>

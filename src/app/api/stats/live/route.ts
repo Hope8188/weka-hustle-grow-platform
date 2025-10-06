@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { serviceRequests, users, services } from "@/db/schema"
+import { serviceRequests, user, services } from "@/db/schema"
 import { sql, gt, and, eq } from "drizzle-orm"
 import { NextResponse } from "next/server"
 
@@ -21,7 +21,7 @@ export async function GET() {
     // Get total users count
     const totalUsers = await db
       .select({ count: sql<number>`count(*)` })
-      .from(users)
+      .from(user)
     
     // Calculate avg response time (mock for now - can be enhanced later)
     const avgResponseMinutes = 12 // Mock value - in real app, calculate from actual data
