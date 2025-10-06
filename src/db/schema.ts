@@ -17,6 +17,8 @@ export const user = sqliteTable("user", {
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
+  phoneVerified: integer("phone_verified", { mode: "boolean" })
+    .$defaultFn(() => false),
 });
 
 export const session = sqliteTable("session", {
@@ -133,6 +135,7 @@ export const serviceRequests = sqliteTable('service_requests', {
   matchedProviderId: text('matched_provider_id').references(() => user.id, { onDelete: 'set null' }),
   createdAt: text('created_at').notNull(),
   matchedAt: text('matched_at'),
+  responseTime: integer('response_time'),
 });
 
 export const reviews = sqliteTable('reviews', {

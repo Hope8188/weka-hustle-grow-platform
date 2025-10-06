@@ -1,43 +1,56 @@
-import { db } from "@/db"
-import { serviceRequests, user, services } from "@/db/schema"
-import { sql, gt, and, eq } from "drizzle-orm"
-import { NextResponse } from "next/server"
+import { NextResponse } from 'next/server';
+import { db } from '@/db';
+import { serviceRequests, services, user } from '@/db/schema';
+import { sql, and, isNotNull } from 'drizzle-orm';
 
 export async function GET() {
   try {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    // Count requests in last 24 hours
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     
-    // Count service requests in last 24h
-    const recentRequests = await db
+    const requestsLast24h = await db
       .select({ count: sql<number>`count(*)` })
       .from(serviceRequests)
-      .where(gt(serviceRequests.createdAt, twentyFourHoursAgo))
-    
-    // Count active providers (users with at least one service)
+      .where(sql`${serviceRequests.createdAt} >= ${twentyFourHoursAgo}`);
+
+    // Count active providers (users who have at least one service)
     const activeProviders = await db
       .select({ count: sql<number>`count(distinct ${services.userId})` })
-      .from(services)
-    
-    // Get total users count
+      .from(services);
+
+    // Count total users
     const totalUsers = await db
       .select({ count: sql<number>`count(*)` })
-      .from(user)
-    
-    // Calculate avg response time (mock for now - can be enhanced later)
-    const avgResponseMinutes = 12 // Mock value - in real app, calculate from actual data
-    
+      .from(user);
+
+    // Calculate average response time from actual data (only completed/matched requests with response_time)
+    const avgResponse = await db
+      .select({ avg: sql<number>`avg(${serviceRequests.responseTime})` })
+      .from(serviceRequests)
+      .where(
+        and(
+          isNotNull(serviceRequests.responseTime),
+          sql`${serviceRequests.responseTime} > 0`
+        )
+      );
+
+    const avgResponseMinutes = Math.round(avgResponse[0]?.avg || 12);
+
     return NextResponse.json({
-      requestsLast24h: Number(recentRequests[0]?.count || 0),
-      activeProviders: Number(activeProviders[0]?.count || 0),
-      totalUsers: Number(totalUsers[0]?.count || 0),
+      requestsLast24h: requestsLast24h[0]?.count || 0,
+      activeProviders: activeProviders[0]?.count || 0,
+      totalUsers: totalUsers[0]?.count || 0,
       avgResponseMinutes,
       lastUpdated: new Date().toISOString()
-    })
+    });
   } catch (error) {
-    console.error("Failed to fetch live stats:", error)
-    return NextResponse.json(
-      { error: "Failed to fetch stats" },
-      { status: 500 }
-    )
+    console.error('Stats API error:', error);
+    return NextResponse.json({
+      requestsLast24h: 0,
+      activeProviders: 0,
+      totalUsers: 0,
+      avgResponseMinutes: 12,
+      lastUpdated: new Date().toISOString()
+    }, { status: 500 });
   }
 }

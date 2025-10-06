@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, MessageSquare, Smartphone, Users, LineChart, ArrowRight, Star, Menu, X, Play, TrendingUp, Shield, Zap, ChevronDown, User, LogOut, Clock, Sparkles, MapPin, Briefcase, Megaphone } from "lucide-react"
+import { CheckCircle2, MessageSquare, Smartphone, Users, LineChart, ArrowRight, Star, Menu, X, Play, TrendingUp, Shield, Zap, ChevronDown, User, LogOut, Clock, Sparkles, MapPin, Briefcase, Megaphone, BadgeCheck } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useSession, authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
@@ -460,6 +460,8 @@ export default function Home() {
               liveRequests.slice(0, 6).map((request, i) => {
                 const timeAgo = getTimeAgo(request.createdAt)
                 const isRecent = timeAgo.includes('min') || timeAgo === 'Just now'
+                const isMatched = request.status === 'matched' || request.status === 'completed'
+                const isVerified = request.providerPhoneVerified === 1 || request.providerPhoneVerified === true
                 
                 return (
                   <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10 relative">
@@ -495,9 +497,15 @@ export default function Home() {
                           </Badge>
                         </div>
                       )}
+                      {isMatched && isVerified && (
+                        <div className="flex items-center gap-2 pt-2 border-t border-border">
+                          <BadgeCheck className="w-4 h-4 text-primary" />
+                          <span className="text-xs text-muted-foreground">Matched with verified provider</span>
+                        </div>
+                      )}
                     </div>
                     <Button 
-                      className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                       onClick={handleStartFree}
                     >
                       Contact Now <MessageSquare className="ml-2 w-4 h-4" />
@@ -514,7 +522,9 @@ export default function Home() {
                   description: "Looking for reliable mama fua for 3-bedroom house in Kilimani. Weekly service needed.",
                   customerLocation: "Nairobi",
                   budget: 2500,
-                  createdAt: new Date(Date.now() - 15 * 60000).toISOString() // 15 mins ago
+                  createdAt: new Date(Date.now() - 15 * 60000).toISOString(), // 15 mins ago
+                  status: 'open',
+                  providerPhoneVerified: false
                 },
                 {
                   serviceCategory: "Repairs",
@@ -522,7 +532,9 @@ export default function Home() {
                   description: "Power socket not working in my shop. Need urgent repair.",
                   customerLocation: "Kisumu",
                   budget: 1500,
-                  createdAt: new Date(Date.now() - 45 * 60000).toISOString() // 45 mins ago
+                  createdAt: new Date(Date.now() - 45 * 60000).toISOString(), // 45 mins ago
+                  status: 'open',
+                  providerPhoneVerified: false
                 },
                 {
                   serviceCategory: "Beauty",
@@ -530,7 +542,9 @@ export default function Home() {
                   description: "Need box braids for wedding. Can you come to Westlands?",
                   customerLocation: "Nairobi",
                   budget: 3000,
-                  createdAt: new Date(Date.now() - 2 * 3600000).toISOString() // 2 hours ago
+                  createdAt: new Date(Date.now() - 2 * 3600000).toISOString(), // 2 hours ago
+                  status: 'open',
+                  providerPhoneVerified: false
                 }
               ].map((request, i) => {
                 const timeAgo = getTimeAgo(request.createdAt)
@@ -570,7 +584,7 @@ export default function Home() {
                       </div>
                     </div>
                     <Button 
-                      className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                       onClick={handleStartFree}
                     >
                       Contact Now <MessageSquare className="ml-2 w-4 h-4" />

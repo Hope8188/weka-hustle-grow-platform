@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { serviceRequests, services, userProfiles } from '@/db/schema';
+import { serviceRequests, services, userProfiles, user } from '@/db/schema';
 import { eq, desc, sql, or, and, like } from 'drizzle-orm';
 import { notificationService } from '@/lib/notifications';
 import { auth } from '@/lib/auth';
@@ -84,8 +84,26 @@ export async function GET(request: NextRequest) {
       conditions.push(like(serviceRequests.customerLocation, `%${location}%`));
     }
 
-    // Build and execute query
-    let query = db.select().from(serviceRequests);
+    // Build and execute query with provider verification info
+    let query = db
+      .select({
+        id: serviceRequests.id,
+        customerName: serviceRequests.customerName,
+        customerPhone: serviceRequests.customerPhone,
+        customerLocation: serviceRequests.customerLocation,
+        serviceCategory: serviceRequests.serviceCategory,
+        description: serviceRequests.description,
+        budget: serviceRequests.budget,
+        status: serviceRequests.status,
+        matchedProviderId: serviceRequests.matchedProviderId,
+        createdAt: serviceRequests.createdAt,
+        matchedAt: serviceRequests.matchedAt,
+        responseTime: serviceRequests.responseTime,
+        providerPhoneVerified: user.phoneVerified,
+        providerName: user.name,
+      })
+      .from(serviceRequests)
+      .leftJoin(user, eq(serviceRequests.matchedProviderId, user.id));
     
     if (conditions.length > 0) {
       query = query.where(conditions.length === 1 ? conditions[0] : and(...conditions));
