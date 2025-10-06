@@ -17,22 +17,15 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Weka - Grow Your Hustle",
-  description: "Kenya's most trusted platform for hustlers to find customers and grow their business",
-  manifest: "/manifest.json",
-  themeColor: "#2ecc71",
+  title: "Weka - Kenyan Hustle Platform",
+  description: "Connect with customers, track M-Pesa payments, and grow your business in Kenya",
+  manifest: '/manifest.json',
+  themeColor: '#10b981',
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "Weka"
+    statusBarStyle: 'default',
+    title: 'Weka',
   },
-  formatDetection: {
-    telephone: false
-  },
-  icons: {
-    icon: "/icon-192.png",
-    apple: "/icon-192.png"
-  }
 }
 
 export default function RootLayout({
@@ -48,7 +41,11 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+        >
           <AutumnProvider>
             {children}
             <Toaster />
@@ -56,13 +53,18 @@ export default function RootLayout({
         </ThemeProvider>
         
         {/* PWA Service Worker Registration */}
-        <Script id="sw-register" strategy="afterInteractive">
+        <Script id="register-sw" strategy="afterInteractive">
           {`
             if ('serviceWorker' in navigator) {
-              window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                  .then(reg => console.log('Service Worker registered'))
-                  .catch(err => console.log('Service Worker registration failed:', err));
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(
+                  function(registration) {
+                    console.log('ServiceWorker registered:', registration.scope);
+                  },
+                  function(err) {
+                    console.log('ServiceWorker registration failed:', err);
+                  }
+                );
               });
             }
           `}

@@ -672,23 +672,23 @@ export default function Home() {
 
           {/* Feature Showcase with Screenshots */}
           <div className="space-y-24">
-            {/* M-Pesa Tracking - MARK AS COMING SOON */}
+            {/* M-Pesa Tracking - NOW LIVE */}
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <Badge className="bg-accent/10 text-accent border-accent/20">M-Pesa Integration</Badge>
-                  <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20">Coming Q2 2025</Badge>
+                  <Badge className="bg-primary/10 text-primary border-primary/20">M-Pesa Integration</Badge>
+                  <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20">⚙️ Setup Required</Badge>
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Automatic M-Pesa Payment Tracking</h3>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Every transaction tracked in real-time. See daily, weekly, monthly income at a glance. Know exactly where every shilling goes—no more guessing.
+                  Track every M-Pesa transaction automatically. STK Push payments, real-time updates, and comprehensive transaction history at your fingertips.
                 </p>
                 <ul className="space-y-3">
                   {[
-                    "Real-time M-Pesa sync (In Development)",
+                    "STK Push payments (instant)",
+                    "Real-time transaction tracking",
                     "Automatic receipt generation",
-                    "Profit & expense tracking",
-                    "Tax-ready reports"
+                    "Complete payment history"
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3">
                       <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
@@ -696,53 +696,45 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <p className="text-sm text-muted-foreground mt-4 bg-muted/30 p-3 rounded-lg">
-                  🚧 Currently building Daraja API integration. Join waitlist to get early access!
-                </p>
+                <div className="mt-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-900 dark:text-blue-100">
+                    <strong>Setup Required:</strong> Configure your Daraja API credentials in settings to enable M-Pesa tracking. <a href="/dashboard" className="underline">Get started →</a>
+                  </p>
+                </div>
               </div>
               <div className="relative">
                 <img 
                   src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/6c4b9b66-a969-46df-a871-9cfcb2bc598c/generated_images/clean%2c-modern-mobile-app-interface-moc-35582124-20251004031318.jpg" 
                   alt="M-Pesa tracking dashboard"
-                  className="rounded-2xl shadow-2xl border-2 border-primary/20 opacity-75"
+                  className="rounded-2xl shadow-2xl border-2 border-primary/20"
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl backdrop-blur-sm">
-                  <Badge className="text-lg px-6 py-3 bg-orange-500 text-white">
-                    Coming Q2 2025
-                  </Badge>
-                </div>
               </div>
             </div>
 
-            {/* WhatsApp Automation - MARK AS COMING SOON */}
+            {/* WhatsApp Automation - NOW LIVE */}
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1 relative">
                 <img 
                   src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/6c4b9b66-a969-46df-a871-9cfcb2bc598c/generated_images/modern-mobile-app-screenshot-showing-wha-b9777561-20251004031326.jpg" 
                   alt="WhatsApp automation interface"
-                  className="rounded-2xl shadow-2xl border-2 border-primary/20 opacity-75"
+                  className="rounded-2xl shadow-2xl border-2 border-primary/20"
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl backdrop-blur-sm">
-                  <Badge className="text-lg px-6 py-3 bg-orange-500 text-white">
-                    Coming Q2 2025
-                  </Badge>
-                </div>
               </div>
               <div className="order-1 lg:order-2">
                 <div className="flex items-center gap-2 mb-4">
                   <Badge className="bg-primary/10 text-primary border-primary/20">Smart Automation</Badge>
-                  <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20">Coming Q2 2025</Badge>
+                  <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20">⚙️ Setup Required</Badge>
                 </div>
-                <h3 className="text-3xl font-bold mb-4">WhatsApp Auto Follow-ups</h3>
+                <h3 className="text-3xl font-bold mb-4">WhatsApp & SMS Notifications</h3>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Never lose a customer again. Automated reminders bring repeat business without lifting a finger. Your customers stay engaged, you stay busy.
+                  Automatic customer notifications via WhatsApp and SMS. Never miss a customer again with instant alerts for new service requests.
                 </p>
                 <ul className="space-y-3">
                   {[
-                    "Scheduled customer reminders (In Development)",
-                    "Personalized messages",
-                    "Booking confirmations",
-                    "Payment reminders"
+                    "SMS notifications (via Africa's Talking)",
+                    "WhatsApp Business API integration",
+                    "Service request alerts",
+                    "Customer follow-up messages"
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3">
                       <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
@@ -750,13 +742,15 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <p className="text-sm text-muted-foreground mt-4 bg-muted/30 p-3 rounded-lg">
-                  🚧 WhatsApp Business API integration launching Q2 2025. Early bird users get 3 months free!
-                </p>
+                <div className="mt-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-900 dark:text-blue-100">
+                    <strong>Setup Required:</strong> Add your Africa's Talking and WhatsApp Business API keys in settings. <a href="/dashboard" className="underline">Get started →</a>
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Analytics Dashboard - KEEP AS IS (this works) */}
+            {/* Analytics Dashboard - LIVE */}
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
                 <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20">Growth Insights</Badge>
@@ -785,6 +779,48 @@ export default function Home() {
                   className="rounded-2xl shadow-2xl border-2 border-primary/20"
                 />
                 <div className="absolute -bottom-4 -right-4 w-64 h-64 bg-secondary/20 rounded-full blur-3xl -z-10"></div>
+              </div>
+            </div>
+
+            {/* Phone Verification - LIVE */}
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="order-2 lg:order-1">
+                <Card className="p-8 bg-gradient-to-br from-primary/5 to-accent/5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Shield className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg">Trust & Verification</h4>
+                      <Badge className="bg-green-500/10 text-green-600 border-green-500/20">✓ Live</Badge>
+                    </div>
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-primary" />
+                      <span>Phone OTP verification</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-primary" />
+                      <span>Trust badges & ratings</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-primary" />
+                      <span>Review system</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-primary" />
+                      <span>Provider verification</span>
+                    </li>
+                  </ul>
+                </Card>
+              </div>
+              <div className="order-1 lg:order-2">
+                <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">Trust System</Badge>
+                <h3 className="text-3xl font-bold mb-4">Build Trust with Customers</h3>
+                <p className="text-lg text-muted-foreground mb-6">
+                  Verify your phone with OTP, collect reviews from customers, and display trust badges. Show customers they can trust you.
+                </p>
               </div>
             </div>
           </div>
@@ -1000,7 +1036,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section - NEW */}
+      {/* FAQ Section - UPDATE ANSWERS */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
@@ -1015,28 +1051,28 @@ export default function Home() {
           <div className="space-y-4">
             {[
               {
-                q: "How does the customer marketplace work?",
-                a: "Customers post service requests with details about what they need, where, and their budget. You browse these requests in your dashboard and contact customers directly via WhatsApp for jobs that match your skills. It's like a job board made specifically for Kenyan hustlers."
+                q: "How does M-Pesa tracking work?",
+                a: "Weka integrates with Safaricom's Daraja API for real-time M-Pesa tracking. After connecting your business shortcode and passkey in settings, all M-Pesa payments are automatically logged. You'll see transaction details, amounts, and customer info instantly. Setup takes 5 minutes."
               },
               {
                 q: "Do I need technical skills to use Weka?",
-                a: "Not at all! Weka is designed for hustlers, not tech experts. Setup takes 30 seconds with just your phone number and a PIN. If you can use WhatsApp, you can use Weka. Plus, we offer free training and 24/7 support in English and Swahili."
+                a: "Not at all! Weka is designed for hustlers, not tech experts. The marketplace and customer matching work immediately. For advanced features like M-Pesa tracking, we provide step-by-step setup guides. If you can use WhatsApp, you can use Weka."
               },
               {
-                q: "How much does it cost after the free trial?",
-                a: "The Starter plan is free forever (access to marketplace + basic features). Hustler Pro is KSh 500/month for advanced features. Business is KSh 1,500/month for teams. Pay monthly via M-Pesa or Stripe—no contracts, cancel anytime."
+                q: "What features work without API setup?",
+                a: "Customer marketplace, service listings, phone verification, reviews & ratings, and business analytics work immediately. M-Pesa tracking and WhatsApp automation require API keys (we provide free setup guides)."
               },
               {
-                q: "Can I use Weka if I don't have many customers yet?",
-                a: "Yes! That's exactly who we built this for. Our live marketplace shows you real customer requests every day. Browse requests, contact customers directly, and build your client base steadily. Many hustlers land their first new customer within 24 hours of signing up."
+                q: "How do I get started with M-Pesa integration?",
+                a: "Sign up for a Safaricom Daraja account (free), get your API keys, and add them in Weka settings. Our step-by-step guide makes it simple. Contact support if you need help."
               },
               {
                 q: "Is my data safe and secure?",
-                a: "Absolutely. We use bank-level encryption to protect your data. Your payment info is never shared with third parties. We're fully compliant with Kenya's Data Protection Act."
+                a: "Absolutely. We use bank-level encryption to protect your data. Your M-Pesa info is never shared with third parties. We're fully compliant with Kenya's Data Protection Act."
               },
               {
                 q: "What if I need help or have a problem?",
-                a: "Our Kenyan-based support team is here 7 days a week. Reach us via WhatsApp, phone, or email. We respond in minutes, not days. Your success is our success."
+                a: "Our Kenyan-based support team is here 7 days a week via WhatsApp, phone, or email. We respond in minutes, not days. Your success is our success."
               }
             ].map((faq, i) => (
               <Card key={i} className="overflow-hidden">
