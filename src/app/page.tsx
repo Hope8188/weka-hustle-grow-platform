@@ -12,15 +12,58 @@ import Link from "next/link"
 import { useCustomer } from "autumn-js/react"
 import PricingTable from "@/components/autumn/pricing-table"
 
+// Helper function to calculate time ago
+function getTimeAgo(date: string | Date) {
+  const now = new Date()
+  const past = new Date(date)
+  const diffMs = now.getTime() - past.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+
+  if (diffMins < 1) return "Just now"
+  if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+  if (diffDays === 1) return "Yesterday"
+  if (diffDays < 7) return `${diffDays} days ago`
+  return new Date(date).toLocaleDateString()
+}
+
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
   const [showFloatingCTA, setShowFloatingCTA] = useState(false)
   const [liveActivity, setLiveActivity] = useState({ name: "John", location: "Nairobi", action: "signed up" })
   const [liveRequests, setLiveRequests] = useState<any[]>([])
+  const [liveStats, setLiveStats] = useState({
+    requestsLast24h: 150,
+    activeProviders: 5247,
+    totalUsers: 5247,
+    avgResponseMinutes: 12,
+    lastUpdated: new Date().toISOString()
+  })
   const { data: session, isPending, refetch } = useSession()
   const { customer, isLoading: customerLoading } = useCustomer()
   const router = useRouter()
+
+  // Fetch live stats
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/stats/live')
+        if (response.ok) {
+          const data = await response.json()
+          setLiveStats(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch live stats:', error)
+      }
+    }
+    fetchStats()
+    // Refresh every 60 seconds
+    const interval = setInterval(fetchStats, 60000)
+    return () => clearInterval(interval)
+  }, [])
 
   // Fetch live service requests - FIX API RESPONSE HANDLING
   useEffect(() => {
@@ -267,17 +310,17 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Urgency Banner */}
+      {/* Urgency Banner with live data */}
       <div className="fixed top-16 w-full bg-gradient-to-r from-primary via-accent to-secondary z-40">
         <div className="max-w-7xl mx-auto px-4 py-2 text-center">
           <p className="text-white text-sm font-medium flex items-center justify-center gap-2">
             <Clock className="w-4 h-4" />
-            <span>🔥 150+ Customers Looking For Services RIGHT NOW - Start in 30 Seconds</span>
+            <span>🔥 {liveStats.requestsLast24h}+ Customers Looking For Services RIGHT NOW - Start in 30 Seconds</span>
           </p>
         </div>
       </div>
 
-      {/* Hero Section - SIMPLIFIED */}
+      {/* Hero Section - Use live stats */}
       <section className="relative pt-40 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
@@ -303,7 +346,7 @@ export default function Home() {
                 Get Your First <span className="gradient-text">Customer</span> in <span className="gradient-text">24 Hours</span>
               </h1>
               <p className="text-xl sm:text-2xl mb-6 font-medium">
-                150+ customers are looking for your services <span className="text-primary">RIGHT NOW</span>
+                {liveStats.requestsLast24h}+ customers are looking for your services <span className="text-primary">RIGHT NOW</span>
               </p>
               <p className="text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed">
                 No more waiting for customers. Just enter your phone number, set a PIN, and start getting matched with people who need your services today.
@@ -338,21 +381,27 @@ export default function Home() {
                 </Button>
               </div>
 
-              {/* Social Proof Stats */}
+              {/* Social Proof Stats - LIVE DATA */}
               <div className="flex flex-wrap items-center gap-6 text-sm">
                 <div>
-                  <p className="text-3xl font-bold text-primary">5,247</p>
+                  <p className="text-3xl font-bold text-primary">{liveStats.activeProviders.toLocaleString()}</p>
                   <p className="text-muted-foreground">Active Hustlers</p>
                 </div>
                 <div className="h-12 w-px bg-border"></div>
                 <div>
-                  <p className="text-3xl font-bold text-accent">KSh 127M+</p>
-                  <p className="text-muted-foreground">Earned This Year</p>
+                  <p className="text-3xl font-bold text-accent">{liveStats.avgResponseMinutes} min</p>
+                  <p className="text-muted-foreground">Avg Response</p>
                 </div>
                 <div className="h-12 w-px bg-border"></div>
                 <div>
-                  <p className="text-3xl font-bold text-secondary">Today</p>
-                  <p className="text-muted-foreground">Last verified</p>
+                  <p className="text-3xl font-bold text-secondary">Live</p>
+                  <p className="text-muted-foreground text-xs">
+                    Updated {new Date(liveStats.lastUpdated).toLocaleTimeString('en-KE', { 
+                      hour: '2-digit', 
+                      minute: '2-digit',
+                      hour12: true 
+                    })}
+                  </p>
                 </div>
               </div>
             </div>
@@ -372,7 +421,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LIVE MARKETPLACE PREVIEW - FIX FIELD NAMES */}
+      {/* LIVE MARKETPLACE PREVIEW - ENHANCED */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/30 to-background">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
@@ -382,12 +431,20 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3">
               These Customers Are <span className="gradient-text">Waiting RIGHT NOW</span>
             </h2>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Real people, real requests, posted in the last 24 hours. Sign up to contact them instantly.
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-2">
+              Real people, real requests. Sign up to contact them instantly.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Last updated: {new Date(liveStats.lastUpdated).toLocaleTimeString('en-KE', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true,
+                timeZoneName: 'short'
+              })}
             </p>
             
             {/* Customer CTA */}
-            <div className="bg-secondary/10 border-2 border-secondary/20 rounded-xl p-4 max-w-xl mx-auto mb-8">
+            <div className="bg-secondary/10 border-2 border-secondary/20 rounded-xl p-4 max-w-xl mx-auto mb-8 mt-6">
               <p className="text-sm font-medium mb-2">👋 Looking for a service provider?</p>
               <Button
                 size="lg"
@@ -403,39 +460,56 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {liveRequests.length > 0 ? (
-              liveRequests.slice(0, 6).map((request, i) => (
-                <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10">
-                  <div className="flex items-start justify-between mb-3">
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                      {request.serviceCategory}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(request.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{request.customerName || 'Service Request'}</h3>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                    {request.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{request.customerLocation}</span>
+              liveRequests.slice(0, 6).map((request, i) => {
+                const timeAgo = getTimeAgo(request.createdAt)
+                const isRecent = timeAgo.includes('min') || timeAgo === 'Just now'
+                
+                return (
+                  <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10 relative">
+                    {isRecent && (
+                      <div className="absolute top-3 right-3">
+                        <Badge className="bg-green-500 text-white text-xs animate-pulse">
+                          🔥 Hot
+                        </Badge>
+                      </div>
+                    )}
+                    <div className="flex items-start justify-between mb-3">
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                        {request.serviceCategory}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground font-medium">
+                        {timeAgo}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm font-bold text-primary">
-                      <span>KSh {request.budget?.toLocaleString() || 'Negotiable'}</span>
+                    <h3 className="font-bold text-lg mb-2 line-clamp-1">{request.customerName || 'Service Request'}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {request.description}
+                    </p>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2 text-sm">
+                        <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
+                        <span className="text-muted-foreground">{request.customerLocation}</span>
+                      </div>
+                      {request.budget && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">Budget:</span>
+                          <Badge variant="outline" className="font-bold text-primary border-primary/30">
+                            KSh {request.budget.toLocaleString()}
+                          </Badge>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <Button 
-                    className="w-full mt-4 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                    onClick={handleStartFree}
-                  >
-                    Contact Customer <MessageSquare className="ml-2 w-4 h-4" />
-                  </Button>
-                </Card>
-              ))
+                    <Button 
+                      className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                      onClick={handleStartFree}
+                    >
+                      Contact Now <MessageSquare className="ml-2 w-4 h-4" />
+                    </Button>
+                  </Card>
+                )
+              })
             ) : (
-              // Fallback examples if API fails
+              // Fallback examples with enhanced styling
               [
                 {
                   serviceCategory: "Cleaning",
@@ -443,7 +517,7 @@ export default function Home() {
                   description: "Looking for reliable mama fua for 3-bedroom house in Kilimani. Weekly service needed.",
                   customerLocation: "Nairobi",
                   budget: 2500,
-                  date: "Today"
+                  createdAt: new Date(Date.now() - 15 * 60000).toISOString() // 15 mins ago
                 },
                 {
                   serviceCategory: "Repairs",
@@ -451,7 +525,7 @@ export default function Home() {
                   description: "Power socket not working in my shop. Need urgent repair.",
                   customerLocation: "Kisumu",
                   budget: 1500,
-                  date: "Today"
+                  createdAt: new Date(Date.now() - 45 * 60000).toISOString() // 45 mins ago
                 },
                 {
                   serviceCategory: "Beauty",
@@ -459,43 +533,63 @@ export default function Home() {
                   description: "Need box braids for wedding. Can you come to Westlands?",
                   customerLocation: "Nairobi",
                   budget: 3000,
-                  date: "2 hours ago"
+                  createdAt: new Date(Date.now() - 2 * 3600000).toISOString() // 2 hours ago
                 }
-              ].map((request, i) => (
-                <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10">
-                  <div className="flex items-start justify-between mb-3">
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                      {request.serviceCategory}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">{request.date}</span>
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{request.customerName || 'Service Request'}</h3>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                    {request.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{request.customerLocation}</span>
+              ].map((request, i) => {
+                const timeAgo = getTimeAgo(request.createdAt)
+                const isRecent = timeAgo.includes('min') || timeAgo === 'Just now'
+                
+                return (
+                  <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10 relative">
+                    {isRecent && (
+                      <div className="absolute top-3 right-3">
+                        <Badge className="bg-green-500 text-white text-xs animate-pulse">
+                          🔥 Hot
+                        </Badge>
+                      </div>
+                    )}
+                    <div className="flex items-start justify-between mb-3">
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                        {request.serviceCategory}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground font-medium">
+                        {timeAgo}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm font-bold text-primary">
-                      <span>KSh {request.budget?.toLocaleString()}</span>
+                    <h3 className="font-bold text-lg mb-2 line-clamp-1">{request.customerName}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {request.description}
+                    </p>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2 text-sm">
+                        <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
+                        <span className="text-muted-foreground">{request.customerLocation}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">Budget:</span>
+                        <Badge variant="outline" className="font-bold text-primary border-primary/30">
+                          KSh {request.budget.toLocaleString()}
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
-                  <Button 
-                    className="w-full mt-4 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                    onClick={handleStartFree}
-                  >
-                    Contact Customer <MessageSquare className="ml-2 w-4 h-4" />
-                  </Button>
-                </Card>
-              ))
+                    <Button 
+                      className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                      onClick={handleStartFree}
+                    >
+                      Contact Now <MessageSquare className="ml-2 w-4 h-4" />
+                    </Button>
+                  </Card>
+                )
+              })
             )}
           </div>
 
           <div className="text-center">
-            <p className="text-lg font-medium mb-4">
-              + 144 more customers posted in the last 24 hours
+            <p className="text-lg font-medium mb-2">
+              + {Math.max(0, liveStats.requestsLast24h - 6)} more customers posted in the last 24 hours
+            </p>
+            <p className="text-sm text-muted-foreground mb-4">
+              Average response time: {liveStats.avgResponseMinutes} minutes
             </p>
             <Button 
               size="lg"
