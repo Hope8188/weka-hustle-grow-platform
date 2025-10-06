@@ -18,18 +18,19 @@ export default function Home() {
   const [showFloatingCTA, setShowFloatingCTA] = useState(false)
   const [liveActivity, setLiveActivity] = useState({ name: "John", location: "Nairobi", action: "signed up" })
   const [liveRequests, setLiveRequests] = useState<any[]>([])
-  const { data: session, isPending } = useSession()
+  const { data: session, isPending, refetch } = useSession()
   const { customer, isLoading: customerLoading } = useCustomer()
   const router = useRouter()
 
-  // Fetch live service requests
+  // Fetch live service requests - FIX API RESPONSE HANDLING
   useEffect(() => {
     const fetchRequests = async () => {
       try {
         const response = await fetch('/api/service-requests?limit=6')
         if (response.ok) {
           const data = await response.json()
-          setLiveRequests(data.requests || [])
+          // API returns array directly, not wrapped in {requests: [...]}
+          setLiveRequests(Array.isArray(data) ? data : [])
         }
       } catch (error) {
         console.error('Failed to fetch service requests:', error)
@@ -68,6 +69,7 @@ export default function Home() {
       toast.error(error.code)
     } else {
       localStorage.removeItem("bearer_token")
+      refetch() // Update session state
       toast.success("Signed out successfully")
       router.push("/")
     }
@@ -370,7 +372,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LIVE MARKETPLACE PREVIEW - NEW SECTION */}
+      {/* LIVE MARKETPLACE PREVIEW - FIX FIELD NAMES */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/30 to-background">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
@@ -405,20 +407,20 @@ export default function Home() {
                 <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10">
                   <div className="flex items-start justify-between mb-3">
                     <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                      {request.category}
+                      {request.serviceCategory}
                     </Badge>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(request.created_at).toLocaleDateString()}
+                      {new Date(request.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <h3 className="font-bold text-lg mb-2">{request.title}</h3>
+                  <h3 className="font-bold text-lg mb-2">{request.customerName || 'Service Request'}</h3>
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                     {request.description}
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{request.location}</span>
+                      <span className="text-muted-foreground">{request.customerLocation}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm font-bold text-primary">
                       <span>KSh {request.budget?.toLocaleString() || 'Negotiable'}</span>
@@ -436,26 +438,26 @@ export default function Home() {
               // Fallback examples if API fails
               [
                 {
-                  category: "Cleaning",
-                  title: "Need House Cleaning Today",
+                  serviceCategory: "Cleaning",
+                  customerName: "Need House Cleaning Today",
                   description: "Looking for reliable mama fua for 3-bedroom house in Kilimani. Weekly service needed.",
-                  location: "Nairobi",
+                  customerLocation: "Nairobi",
                   budget: 2500,
                   date: "Today"
                 },
                 {
-                  category: "Repairs",
-                  title: "Electrician Needed ASAP",
+                  serviceCategory: "Repairs",
+                  customerName: "Electrician Needed ASAP",
                   description: "Power socket not working in my shop. Need urgent repair.",
-                  location: "Kisumu",
+                  customerLocation: "Kisumu",
                   budget: 1500,
                   date: "Today"
                 },
                 {
-                  category: "Beauty",
-                  title: "Hair Braiding This Weekend",
+                  serviceCategory: "Beauty",
+                  customerName: "Hair Braiding This Weekend",
                   description: "Need box braids for wedding. Can you come to Westlands?",
-                  location: "Nairobi",
+                  customerLocation: "Nairobi",
                   budget: 3000,
                   date: "2 hours ago"
                 }
@@ -463,18 +465,18 @@ export default function Home() {
                 <Card key={i} className="p-6 hover:shadow-xl transition-all hover:scale-105 border-2 border-primary/10">
                   <div className="flex items-start justify-between mb-3">
                     <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                      {request.category}
+                      {request.serviceCategory}
                     </Badge>
                     <span className="text-xs text-muted-foreground">{request.date}</span>
                   </div>
-                  <h3 className="font-bold text-lg mb-2">{request.title}</h3>
+                  <h3 className="font-bold text-lg mb-2">{request.customerName || 'Service Request'}</h3>
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                     {request.description}
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">{request.location}</span>
+                      <span className="text-muted-foreground">{request.customerLocation}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm font-bold text-primary">
                       <span>KSh {request.budget?.toLocaleString()}</span>
