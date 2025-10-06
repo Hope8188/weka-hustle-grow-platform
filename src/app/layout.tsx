@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/sonner"
 import AutumnProvider from "@/lib/autumn-provider"
+import { ThemeProvider } from "next-themes"
 import Script from "next/script"
 
 const geistSans = Geist({
@@ -40,17 +41,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AutumnProvider>
-          {children}
-          <Toaster />
-        </AutumnProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <AutumnProvider>
+            {children}
+            <Toaster />
+          </AutumnProvider>
+        </ThemeProvider>
         
         {/* PWA Service Worker Registration */}
         <Script id="sw-register" strategy="afterInteractive">
